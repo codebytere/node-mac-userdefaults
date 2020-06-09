@@ -106,7 +106,8 @@ Napi::Value GetUserDefault(const Napi::CallbackInfo &info) {
   } else if (type == "array") {
     return NSArrayToNapiArray(env, [defaults arrayForKey:default_key]);
   } else if (type == "dictionary") {
-    return NSDictionaryToNapiObject(env, [defaults dictionaryForKey:default_key]);
+    return NSDictionaryToNapiObject(env,
+                                    [defaults dictionaryForKey:default_key]);
   } else {
     return env.Null();
   }
