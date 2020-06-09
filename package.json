@@ -1,0 +1,42 @@
+{
+  "name": "node-mac-userdefaults",
+  "version": "1.0.0",
+  "description": "A native Node.js module providing an interface to the user’s defaults database",
+  "main": "index.js",
+  "scripts": {
+    "build": "node-gyp rebuild",
+    "clean": "node-gyp clean",
+    "lint": "prettier --check index.js",
+    "format": "clang-format -i defaults.mm && prettier --write index.js",
+    "test": "./node_modules/.bin/mocha --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codebytere/node-mac-userdefaults.git"
+  },
+  "keywords": [
+    "nodejs",
+    "native",
+    "node",
+    "modules",
+    "objective-c",
+    "macos"
+  ],
+  "author": "Shelley Vohr <shelley.vohr@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/codebytere/node-mac-userdefaults/issues"
+  },
+  "homepage": "https://github.com/codebytere/node-mac-userdefaults#readme",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "clang-format": "^1.4.0",
+    "mocha": "^7.2.0",
+    "node-gyp": "^7.0.0",
+    "prettier": "^2.0.5"
+  },
+  "dependencies": {
+    "bindings": "^1.5.0",
+    "node-addon-api": "^3.0.0"
+  }
+}
