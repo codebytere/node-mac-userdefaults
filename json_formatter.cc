@@ -31,6 +31,7 @@ bool JSONFormatter::BuildJSONString(Napi::Value value, size_t depth) {
     return true;
   } else if (value.IsString()) {
     std::string str = value.ToString().Utf8Value();
+    // This needs quotes to ensure well-formed JSON.
     json_string_->append("\"" + str + "\"");
     return true;
   } else if (value.IsNumber()) {
@@ -73,6 +74,7 @@ bool JSONFormatter::BuildJSONString(Napi::Value value, size_t depth) {
       if (first_value_has_been_output)
         json_string_->push_back(',');
 
+      // This needs quotes to ensure well-formed JSON.
       json_string_->append("\"" + key + "\"");
       json_string_->push_back(':');
 

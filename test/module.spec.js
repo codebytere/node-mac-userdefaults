@@ -54,6 +54,57 @@ describe('node-mac-userdefaults', () => {
         }).to.throw(`undefined must be a valid ${type}`)
       }
     })
+
+    it('should be able to set a user default to a string', () => {
+      setUserDefault('string', 'StringTest', 'string-test')
+
+      const stringDefault = getUserDefault('string', 'StringTest')
+      expect(stringDefault).to.eq('string-test')
+    })
+
+    it('should be able to set a user default to a boolean', () => {
+      setUserDefault('boolean', 'BooleanTest', true)
+
+      const boolDefault = getUserDefault('boolean', 'BooleanTest')
+      expect(boolDefault).to.be.true
+    })
+
+    it('should be able to set a user default to a double', () => {
+      setUserDefault('double', 'DoubleTest', 1.0)
+
+      const doubleDefault = getUserDefault('double', 'DoubleTest')
+      expect(doubleDefault).to.equal(1.0)
+    })
+
+    it('should be able to set a user default to a float', () => {
+      setUserDefault('float', 'FloatTest', 4.5)
+
+      const floatDefault = getUserDefault('float', 'FloatTest')
+      expect(floatDefault).to.equal(4.5)
+    })
+
+    it('should be able to set a user default to a url', () => {
+      const url = 'https://codebyte.re'
+      setUserDefault('url', 'URLTest', url)
+
+      const urlDefault = getUserDefault('url', 'URLTest')
+      expect(urlDefault).to.equal(url)
+    })
+
+    it('should be able to set a user default to an array', () => {
+      const array = ['do', 're', 'mi']
+      setUserDefault('array', 'ArrayTest', array)
+
+      const arrayDefault = getUserDefault('array', 'ArrayTest')
+      expect(arrayDefault).to.deep.equal(array)
+    })
+
+    it('should be able to set a user default to an object', () => {
+      setUserDefault('dictionary', 'DictTest', { hello: 'world' })
+
+      const dictDefault = getUserDefault('dictionary', 'DictTest')
+      expect(dictDefault).to.deep.equal({ hello: 'world' })
+    })
   })
 
   describe('isKeyManaged()', () => {
