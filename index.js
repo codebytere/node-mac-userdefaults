@@ -22,12 +22,12 @@ function getUserDefault(type, key) {
 }
 
 function setUserDefault(type, key, value) {
-  const isFloatOrDouble = (n) => !isNaN(parseFloat(n))
-  const isObject = (o) => Object.prototype.toString.call(o) === '[object Object]'
-
   if (!VALID_TYPES.includes(type)) {
     throw new TypeError(`${type} must be one of ${VALID_TYPES.join(', ')}`)
   }
+
+  const isFloatOrDouble = (n) => !isNaN(parseFloat(n))
+  const isObject = (o) => Object.prototype.toString.call(o) === '[object Object]'
 
   if (type === 'string' && typeof value !== 'string') {
     throw new Error(`${value} must be a valid string`)
