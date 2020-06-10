@@ -3,18 +3,21 @@
 // Apple APIs
 #import <Foundation/Foundation.h>
 
+#include "json_formatter.h"
+
 /* HELPER FUNCTIONS */
 
 Napi::Array NSArrayToNapiArray(Napi::Env env, NSArray *array);
 Napi::Object NSDictionaryToNapiObject(Napi::Env env, NSDictionary *dict);
 NSArray *NapiArrayToNSArray(Napi::Array array);
+NSDictionary *NapiObjectToNSDictionary(Napi::Object object);
 
 // Converts a std::string to an NSString.
 NSString *ToNSString(const std::string &str) {
   return [NSString stringWithUTF8String:str.c_str()];
 }
 
-// Converts a NSArray to a Napi::Array. 
+// Converts a NSArray to a Napi::Array.
 Napi::Array NSArrayToNapiArray(Napi::Env env, NSArray *array) {
   if (!array)
     return Napi::Array::New(env, 0);
@@ -49,7 +52,21 @@ Napi::Array NSArrayToNapiArray(Napi::Env env, NSArray *array) {
   return result;
 }
 
-// Converts a Napi::Array to a NSArray. 
+// Converts a Napi::Object to an NSDictionary.
+NSDictionary *NapiObjectToNSDictionary(Napi::Value value) {
+  std::string json;
+  if (!JSONFormatter::Format(value, &json))
+    return nil;
+
+  NSData *jsonData = [NSData dataWithBytes:json.c_str() length:json.length()];
+  id obj = [NSJSONSerialization JSONObjectWithData:jsonData
+                                           options:0
+                                             error:nil];
+
+  return [obj isKindOfClass:[NSDictionary class]] ? obj : nil;
+}
+
+// Converts a Napi::Array to an NSArray.
 NSArray *NapiArrayToNSArray(Napi::Array array) {
   NSMutableArray *mutable_array =
       [NSMutableArray arrayWithCapacity:array.Length()];
@@ -69,7 +86,8 @@ NSArray *NapiArrayToNSArray(Napi::Array array) {
       Napi::Array sub_array = val.As<Napi::Array>();
       [mutable_array addObject:NapiArrayToNSArray(sub_array)];
     } else if (val.IsObject()) {
-      // TODO
+      NSDictionary *dict = NapiObjectToNSDictionary(val);
+      [mutable_array addObject:dict];
     }
   }
 
@@ -191,8 +209,8 @@ void SetUserDefault(const Napi::CallbackInfo &info) {
     Napi::Array array = info[2].As<Napi::Array>();
     [defaults setObject:NapiArrayToNSArray(array) forKey:default_key];
   } else if (type == "dictionary") {
-    // (NSDictionary* dict = DictionaryValueToNSDictionary(value)) {
-    // [defaults setObject:dict forKey:default_key];
+    Napi::Value value = info[2].As<Napi::Value>();
+    [defaults setObject:NapiObjectToNSDictionary(value) forKey:default_key];
   }
 }
 

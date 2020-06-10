@@ -8,7 +8,9 @@
           "MACOSX_DEPLOYMENT_TARGET": "10.12"
         },
         "sources": [
-          "defaults.mm"
+          "defaults.mm",
+          "json_formatter.h",
+          "json_formatter.cc"
         ],
       }]
     ],
