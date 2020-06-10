@@ -84,10 +84,13 @@ NSArray *NapiArrayToNSArray(Napi::Array array) {
       [mutable_array addObject:ToNSString(str)];
     } else if (val.IsArray()) {
       Napi::Array sub_array = val.As<Napi::Array>();
-      [mutable_array addObject:NapiArrayToNSArray(sub_array)];
+      if (NSArray *ns_arr = NapiArrayToNSArray(sub_array)) {
+        [mutable_array addObject:ns_arr];
+      }
     } else if (val.IsObject()) {
-      NSDictionary *dict = NapiObjectToNSDictionary(val);
-      [mutable_array addObject:dict];
+      if (NSDictionary *dict = NapiObjectToNSDictionary(val)) {
+        [mutable_array addObject:dict];
+      }
     }
   }
 
@@ -207,10 +210,14 @@ void SetUserDefault(const Napi::CallbackInfo &info) {
     [defaults setURL:url forKey:default_key];
   } else if (type == "array") {
     Napi::Array array = info[2].As<Napi::Array>();
-    [defaults setObject:NapiArrayToNSArray(array) forKey:default_key];
+    if (NSArray *ns_arr = NapiArrayToNSArray(array)) {
+      [defaults setObject:ns_arr forKey:default_key];
+    }
   } else if (type == "dictionary") {
     Napi::Value value = info[2].As<Napi::Value>();
-    [defaults setObject:NapiObjectToNSDictionary(value) forKey:default_key];
+    if (NSDictionary* dict = NapiObjectToNSDictionary(value)) {
+      [defaults setObject:dict forKey:default_key];
+    }
   }
 }
 

@@ -4,9 +4,6 @@
     "sources": [ ],
     "conditions": [
       ['OS=="mac"', {
-        "xcode_settings": {
-          "MACOSX_DEPLOYMENT_TARGET": "10.12"
-        },
         "sources": [
           "src/defaults.mm",
           "src/json_formatter.h",
@@ -23,8 +20,9 @@
     ],
     'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS' ],
     "xcode_settings": {
-      "OTHER_CPLUSPLUSFLAGS": ["-std=c++14", "-stdlib=libc++"],
-      "OTHER_LDFLAGS": ["-framework CoreFoundation -framework Cocoa -framework Carbon"]
+      "OTHER_CPLUSPLUSFLAGS": ["-std=c++17", "-stdlib=libc++", "-Wextra"],
+      "OTHER_LDFLAGS": ["-framework CoreFoundation -framework Cocoa -framework Carbon"],
+      "MACOSX_DEPLOYMENT_TARGET": "10.12"
     }
   }]
 }
