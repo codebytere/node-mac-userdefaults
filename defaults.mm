@@ -80,6 +80,14 @@ Napi::Object NSDictionaryToNapiObject(Napi::Env env, NSDictionary *dict) {
 
 /* EXPORTED FUNCTIONS */
 
+Napi::Object GetAllDefaults(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  NSDictionary *all_defaults = [defaults dictionaryRepresentation];
+  return NSDictionaryToNapiObject(env, all_defaults);
+}
+
 Napi::Value GetUserDefault(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
@@ -115,6 +123,8 @@ Napi::Value GetUserDefault(const Napi::CallbackInfo &info) {
 
 // Initializes all functions exposed to JS.
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
+  exports.Set(Napi::String::New(env, "getAllDefaults"),
+              Napi::Function::New(env, GetAllDefaults));
   exports.Set(Napi::String::New(env, "getUserDefault"),
               Napi::Function::New(env, GetUserDefault));
 

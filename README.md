@@ -11,6 +11,10 @@ This native Node.js module provides an interface to the user’s defaults databa
 
 ## API
 
+### `defaults.getAllDefaults()`
+
+Returns `Record<string, any>` - An object containing all currently set defaults and their values for the current user.
+
 ### `defaults.getUserDefault(key, type)`
 
 * `key` String

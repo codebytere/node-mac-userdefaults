@@ -12,4 +12,5 @@ function getUserDefault(key, type) {
 
 module.exports = {
   getUserDefault,
+  getAllDefaults: defaults.getAllDefaults
 }
