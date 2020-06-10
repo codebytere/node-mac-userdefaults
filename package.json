@@ -1,6 +1,6 @@
 {
   "name": "node-mac-userdefaults",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A native Node.js module providing an interface to the user’s defaults database",
   "main": "index.js",
   "scripts": {
