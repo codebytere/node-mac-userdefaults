@@ -73,7 +73,7 @@ const { getUserDefault } = require('node-mac-userdefaults')
 const interfaceStyle = getUserDefault('AppleInterfaceStyle', 'string')
 
 console.log(interfaceStyle) // 'Dark'
-``` 
+```
 
 ### `defaults.setUserDefault(type, key, value[, domain])`
 
@@ -91,6 +91,8 @@ const { setUserDefault } = require('node-mac-userdefaults')
 setUserDefault('boolean', 'ApplePressAndHoldEnabled', true)
 ```
 
+Note: `NSGlobalDomain` is an invalid domain name because it isn't writeable by apps.
+
 ### `defaults.removeUserDefault(key[, domain])`
 
 * `key` String - The `NSUserDefault` to remove, e.g `AppleInterfaceStyle`.
@@ -106,6 +108,8 @@ const { removeUserDefault } = require('node-mac-userdefaults')
 
 removeUserDefault('ApplePressAndHoldEnabled')
 ```
+
+Note: `NSGlobalDomain` is an invalid domain name because it isn't writeable by apps.
 
 ###  `defaults.isKeyManaged(key[, domain])`
 
@@ -123,6 +127,34 @@ const managed = isKeyManaged('ApplePressAndHoldEnabled')
 console.log(managed) // false
 ```
 
+###  `defaults.addDomain(name)`
+
+* `name` String - The name of the domain to insert into the user’s domain hierarchy.
+
+Inserts the specified domain name into the user’s domain hierarchy.
+
+Example:
+```js
+const { addDomain } = require('node-mac-userdefaults')
+
+addDomain('DomainForMyApp')
+```
+
+###  `defaults.removeDomain(name)`
+
+* `name` String - The name of the domain to remove from the user’s domain hierarchy.
+
+Removed the specified domain name into the user’s domain hierarchy.
+
+Example:
+```js
+const { removeDomain } = require('node-mac-userdefaults')
+
+removeDomain('DomainForMyApp')
+```
+
+Note: Passing `NSGlobalDomain` is unsupported.
+
 ## FAQ
 
 ### What are domains?
@@ -131,12 +163,8 @@ The `NSUserDefaults` database consists of a hierarchy or domains. Whenever you r
 
 | Domain Name | Description  | State |
 |---|---|---|
-| `NSArgumentDomain` | This is the highest priority domain - it can be used to temporarily override any preference | volatile |
-| `Application` | This domain is where your app’s settings are stored when you invoke `setUserDefault` methods without specifying a domain | persistent |
-| `NSGlobalDomain` | This domain is where system-wide settings are stored | persistent |
-| `Languages` | This domain contains regional preferences such as month names or date formats for each locale | volatile |
-| `NSRegistrationDomain` | This domain serves as a fallback for any value that is not found in the Application domain  | volatile |
+| `NSArgumentDomain` | The domain consisting of defaults parsed from the application’s arguments | volatile |
+| `NSGlobalDomain` | The domain consisting of defaults meant to be seen by all applications | persistent |
+| `NSRegistrationDomain` | The domain consisting of a set of temporary defaults whose values can be set by the application to ensure that searches will always be successful | volatile |
 
 You can also specify custom domains to store a set of preferences.
-
-See [this resource](https://oleb.net/blog/2014/02/nsuserdefaults-handling-default-values/) for more information.

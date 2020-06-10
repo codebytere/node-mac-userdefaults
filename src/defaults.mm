@@ -276,6 +276,22 @@ Napi::Boolean IsKeyManaged(const Napi::CallbackInfo &info) {
   return Napi::Boolean::New(info.Env(), managed);
 }
 
+// Inserts the specified domain name into the user’s domain hierarchy.
+void AddDomain(const Napi::CallbackInfo &info) {
+  const std::string name = (std::string)info[0].ToString();
+
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  [defaults addSuiteNamed:ToNSString(name)];
+}
+
+// Removes the specified domain name from the user’s domain hierarchy.
+void RemoveDomain(const Napi::CallbackInfo &info) {
+  const std::string name = (std::string)info[0].ToString();
+
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  [defaults removeSuiteNamed:ToNSString(name)];
+}
+
 // Initializes all functions exposed to JS.
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "isKeyManaged"),
@@ -288,6 +304,10 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
               Napi::Function::New(env, SetUserDefault));
   exports.Set(Napi::String::New(env, "removeUserDefault"),
               Napi::Function::New(env, RemoveUserDefault));
+  exports.Set(Napi::String::New(env, "addDomain"),
+            Napi::Function::New(env, AddDomain));
+  exports.Set(Napi::String::New(env, "removeDomain"),
+            Napi::Function::New(env, RemoveDomain));
 
   return exports;
 }

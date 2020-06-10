@@ -4,7 +4,9 @@ const {
   getUserDefault,
   isKeyManaged,
   setUserDefault,
-  removeUserDefault
+  removeUserDefault,
+  addDomain,
+  removeDomain
 } = require('../index')
 
 const VALID_TYPES = [
@@ -151,6 +153,22 @@ describe('node-mac-userdefaults', () => {
       expect(() => {
         removeUserDefault('i-dont-exist', 1)
       }).to.throw(/domain must be a valid string/)
+    })
+  })
+
+  describe('addDomain()', () => {
+    it('should throw on a bad domain', () => {
+      expect(() => {
+        addDomain(1)
+      }).to.throw(/name must be a valid string/)
+    })
+  })
+
+  describe('removeDomain()', () => {
+    it('should throw on a bad domain', () => {
+      expect(() => {
+        removeDomain(1)
+      }).to.throw(/name must be a valid string/)
     })
   })
 })

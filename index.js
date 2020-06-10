@@ -76,10 +76,28 @@ function removeUserDefault(key, domain) {
   return defaults.removeUserDefault.call(this, key, domain)
 }
 
+function addDomain(name) {
+  if (typeof name !== 'string') {
+    throw new TypeError('domain name must be a valid string')
+  }
+
+  return defaults.addDomain.call(this, name)
+}
+
+function removeDomain(name) {
+  if (typeof name !== 'string') {
+    throw new TypeError('domain name must be a valid string')
+  }
+
+  return defaults.removeDomain.call(this, name)
+}
+
 module.exports = {
+  addDomain,
   getAllDefaults,
   getUserDefault,
   isKeyManaged,
   setUserDefault,
-  removeUserDefault
+  removeDomain,
+  removeUserDefault,
 }
