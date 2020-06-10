@@ -3,7 +3,8 @@ const {
   getAllDefaults,
   getUserDefault,
   isKeyManaged,
-  setUserDefault
+  setUserDefault,
+  removeUserDefault
 } = require('../index')
 
 const VALID_TYPES = [
@@ -19,6 +20,12 @@ const VALID_TYPES = [
 
 describe('node-mac-userdefaults', () => {
   describe('getAllDefaults()', () => {
+    it('should throw on a bad domain', () => {
+      expect(() => {
+        getAllDefaults(1)
+      }).to.throw(/domain must be a valid string/)
+    })
+
     it('should return an object containing all current user defaults', () => {
       const allDefaults = getAllDefaults()
       expect(allDefaults).to.be.an.an('object')
@@ -27,10 +34,10 @@ describe('node-mac-userdefaults', () => {
   })
 
   describe('getUserDefault()', () => {
-    it('should throw on extra arguments', () => {
+    it('should throw on a bad domain', () => {
       expect(() => {
-        getUserDefault('bad-type', 'hello-world', 'blah')
-      }).to.throw('Arguments must be (type, key)')
+        getUserDefault('string', 'hello-world', 1)
+      }).to.throw(/domain must be a valid string/)
     })
 
     it('should throw on invalid types', () => {
@@ -60,11 +67,17 @@ describe('node-mac-userdefaults', () => {
       }).to.throw(`bad-type must be one of ${VALID_TYPES.join(', ')}`)
     })
 
+    it('should throw on a bad domain', () => {
+      expect(() => {
+        setUserDefault('string', 'hello', 'world', 1)
+      }).to.throw(/domain must be a valid string/)
+    })
+
     it('should throw on mismatched values for types', () => {
       for (const type of VALID_TYPES) {
         expect(() => {
           setUserDefault(type, 'some-key', undefined)
-        }).to.throw(`undefined must be a valid ${type}`)
+        }).to.throw(`value must be a valid ${type}`)
       }
     })
 
@@ -121,9 +134,23 @@ describe('node-mac-userdefaults', () => {
   })
 
   describe('isKeyManaged()', () => {
+    it('should throw on a bad domain', () => {
+      expect(() => {
+        isKeyManaged('AppleInterfaceStyle', 1)
+      }).to.throw(/domain must be a valid string/)
+    })
+
     it('returns a boolean', () => {
       const managed = isKeyManaged('AppleInterfaceStyle')
       expect(managed).to.be.a('boolean')
+    })
+  })
+
+  describe('removeUserDefault()', () => {
+    it('should throw on a bad domain', () => {
+      expect(() => {
+        removeUserDefault('i-dont-exist', 1)
+      }).to.throw(/domain must be a valid string/)
     })
   })
 })

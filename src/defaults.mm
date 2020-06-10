@@ -139,21 +139,33 @@ Napi::Object NSDictionaryToNapiObject(Napi::Env env, NSDictionary *dict) {
 
 // Returns all NSUserDefaults for the current user.
 Napi::Object GetAllDefaults(const Napi::CallbackInfo &info) {
-  Napi::Env env = info.Env();
+  NSUserDefaults *defaults = [&]() {
+    if (!info[0].IsEmpty()) {
+      const std::string domain = (std::string)info[0].ToString();
+      return [[NSUserDefaults alloc] initWithSuiteName:ToNSString(domain)];
+    }
+    return [NSUserDefaults standardUserDefaults];
+  }();
 
-  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
   NSDictionary *all_defaults = [defaults dictionaryRepresentation];
-  return NSDictionaryToNapiObject(env, all_defaults);
+  return NSDictionaryToNapiObject(info.Env(), all_defaults);
 }
 
 // Returns the value of 'key' in NSUserDefaults for a specified type.
 Napi::Value GetUserDefault(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
-  const std::string type = info[0].As<Napi::String>().Utf8Value();
-  const std::string key = info[1].As<Napi::String>().Utf8Value();
+  const std::string type = (std::string)info[0].ToString();
+  const std::string key = (std::string)info[1].ToString();
 
-  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  NSUserDefaults *defaults = [&]() {
+    if (!info[2].IsEmpty()) {
+      const std::string domain = (std::string)info[2].ToString();
+      return [[NSUserDefaults alloc] initWithSuiteName:ToNSString(domain)];
+    }
+    return [NSUserDefaults standardUserDefaults];
+  }();
+
   NSString *default_key = [NSString stringWithUTF8String:key.c_str()];
 
   if (type == "string") {
@@ -187,11 +199,17 @@ Napi::Value GetUserDefault(const Napi::CallbackInfo &info) {
 
 // Sets the value of the NSUserDefault for 'key' in NSUserDefaults.
 void SetUserDefault(const Napi::CallbackInfo &info) {
-  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-  const std::string type = info[0].As<Napi::String>().Utf8Value();
-  const std::string key = info[1].As<Napi::String>().Utf8Value();
-
+  const std::string type = (std::string)info[0].ToString();
+  const std::string key = (std::string)info[1].ToString();
   NSString *default_key = ToNSString(key);
+
+  NSUserDefaults *defaults = [&]() {
+    if (!info[3].IsEmpty()) {
+      const std::string domain = (std::string)info[3].ToString();
+      return [[NSUserDefaults alloc] initWithSuiteName:ToNSString(domain)];
+    }
+    return [NSUserDefaults standardUserDefaults];
+  }();
 
   if (type == "string") {
     const std::string value = (std::string)info[2].ToString();
@@ -219,7 +237,7 @@ void SetUserDefault(const Napi::CallbackInfo &info) {
     }
   } else if (type == "dictionary") {
     Napi::Value value = info[2].As<Napi::Value>();
-    if (NSDictionary* dict = NapiObjectToNSDictionary(value)) {
+    if (NSDictionary *dict = NapiObjectToNSDictionary(value)) {
       [defaults setObject:dict forKey:default_key];
     }
   }
@@ -227,24 +245,35 @@ void SetUserDefault(const Napi::CallbackInfo &info) {
 
 // Removes the default for 'key' in NSUserDefaults.
 void RemoveUserDefault(const Napi::CallbackInfo &info) {
-  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-
-  const std::string key = info[1].As<Napi::String>().Utf8Value();
+  const std::string key = (std::string)info[0].ToString();
   NSString *default_key = ToNSString(key);
+
+  NSUserDefaults *defaults = [&]() {
+    if (!info[1].IsEmpty()) {
+      const std::string domain = (std::string)info[1].ToString();
+      return [[NSUserDefaults alloc] initWithSuiteName:ToNSString(domain)];
+    }
+    return [NSUserDefaults standardUserDefaults];
+  }();
 
   [defaults removeObjectForKey:default_key];
 }
 
 // Returns whether or not an NSUserDefault is managed by an admin.
 Napi::Boolean IsKeyManaged(const Napi::CallbackInfo &info) {
-  Napi::Env env = info.Env();
+  const std::string key = (std::string)info[0].ToString();
 
-  const std::string key = info[0].As<Napi::String>().Utf8Value();
+  NSUserDefaults *defaults = [&]() {
+    if (!info[1].IsEmpty()) {
+      const std::string domain = (std::string)info[1].ToString();
+      return [[NSUserDefaults alloc] initWithSuiteName:ToNSString(domain)];
+    }
+    return [NSUserDefaults standardUserDefaults];
+  }();
 
-  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
   bool managed = [defaults objectIsForcedForKey:ToNSString(key)];
 
-  return Napi::Boolean::New(env, managed);
+  return Napi::Boolean::New(info.Env(), managed);
 }
 
 // Initializes all functions exposed to JS.

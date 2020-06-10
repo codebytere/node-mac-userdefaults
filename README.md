@@ -11,7 +11,9 @@ This native Node.js module provides an interface to the user’s defaults databa
 
 ## API
 
-### `defaults.getAllDefaults()`
+### `defaults.getAllDefaults([domain])`
+
+* `domain` String (optional) - The domain identifier for an `NSUserDefaults` suite.
 
 Returns `Record<string, any>` - An object containing all currently set defaults and their values for the current user.
 
@@ -55,11 +57,12 @@ console.log(allDefaults)
 */
 ``` 
 
-### `defaults.getUserDefault(type, key)`
+### `defaults.getUserDefault(type, key[, domain])`
 
 * `key` String - The `NSUserDefault` to fetch, e.g `AppleInterfaceStyle`.
 * `type` String - Can be one of `string`, `boolean`, `integer`, `float`, `double`,
   `url`, `array` or `dictionary`.
+* `domain` String (optional) - The domain identifier for an `NSUserDefaults` suite.
 
 Returns `any` - The value of `key` in `NSUserDefaults` of type `type`.
 
@@ -72,11 +75,12 @@ const interfaceStyle = getUserDefault('AppleInterfaceStyle', 'string')
 console.log(interfaceStyle) // 'Dark'
 ``` 
 
-### `defaults.setUserDefault(type, key, value)`
+### `defaults.setUserDefault(type, key, value[, domain])`
 
 * `type` String - Can be `string`, `boolean`, `integer`, `float`, `double`, `url`, `array` or `dictionary`.
 * `key` String - The `NSUserDefault` to update, e.g `AppleInterfaceStyle`.
 * `value` any - The new value to set for `key`; must match type of `type`.
+* `domain` String (optional) - The domain identifier for an `NSUserDefaults` suite.
 
 Sets the value of `key` in `NSUserDefaults`.
 
@@ -87,9 +91,10 @@ const { setUserDefault } = require('node-mac-userdefaults')
 setUserDefault('boolean', 'ApplePressAndHoldEnabled', true)
 ```
 
-### `defaults.removeUserDefault(key)`
+### `defaults.removeUserDefault(key[, domain])`
 
 * `key` String - The `NSUserDefault` to remove, e.g `AppleInterfaceStyle`.
+* `domain` String (optional) - The domain identifier for an `NSUserDefaults` suite.
 
 Removes the `key` in `NSUserDefaults`.
 
@@ -102,9 +107,10 @@ const { removeUserDefault } = require('node-mac-userdefaults')
 removeUserDefault('ApplePressAndHoldEnabled')
 ```
 
-###  `defaults.isKeyManaged(key)`
+###  `defaults.isKeyManaged(key[, domain])`
 
 * `key` String - The `NSUserDefault` to check, e.g `AppleInterfaceStyle`.
+* `domain` String (optional) - The domain identifier for an `NSUserDefaults` suite.
 
 Returns a Boolean value indicating whether the specified key is managed by an administrator.
 

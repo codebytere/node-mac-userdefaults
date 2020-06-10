@@ -11,49 +11,75 @@ const VALID_TYPES = [
   'dictionary',
 ]
 
-function getUserDefault(type, key) {
-  if (arguments.length !== 2) {
-    throw new Error('Arguments must be (type, key)')
-  } else if (!VALID_TYPES.includes(type)) {
-    throw new TypeError(`${type} must be one of ${VALID_TYPES.join(', ')}`)
+function getAllDefaults(domain) {
+  if (domain && typeof domain !== 'string') {
+    throw new TypeError('domain must be a valid string')
   }
 
-  return defaults.getUserDefault.call(this, type, key)
+  return defaults.getAllDefaults.call(this, domain)
 }
 
-function setUserDefault(type, key, value) {
+function getUserDefault(type, key, domain) {
   if (!VALID_TYPES.includes(type)) {
     throw new TypeError(`${type} must be one of ${VALID_TYPES.join(', ')}`)
+  } else if (domain && typeof domain !== 'string') {
+    throw new TypeError('domain must be a valid string')
+  }
+
+  return defaults.getUserDefault.call(this, type, key, domain)
+}
+
+function setUserDefault(type, key, value, domain) {
+  if (!VALID_TYPES.includes(type)) {
+    throw new TypeError(`${type} must be one of ${VALID_TYPES.join(', ')}`)
+  } else if (domain && typeof domain !== 'string') {
+    throw new TypeError('domain must be a valid string')
   }
 
   const isFloatOrDouble = (n) => !isNaN(parseFloat(n))
   const isObject = (o) => Object.prototype.toString.call(o) === '[object Object]'
 
   if (type === 'string' && typeof value !== 'string') {
-    throw new Error(`${value} must be a valid string`)
+    throw new TypeError('value must be a valid string')
   } else if (type === 'double' && !isFloatOrDouble(value)) {
-    throw new Error(`${value} must be a valid double`)
+    throw new TypeError('value must be a valid double')
   } else if (type === 'float' && !isFloatOrDouble(value)) {
-    throw new Error(`${value} must be a valid float`)
+    throw new TypeError('value must be a valid float')
   } else if (type === 'boolean' && typeof value !== 'boolean') {
-    throw new Error(`${value} must be a valid boolean`)
+    throw new TypeError('value must be a valid boolean')
   } else if (type === 'integer' && !Number.isInteger(value)) {
-    throw new Error(`${value} must be a valid integer`)
+    throw new TypeError('value must be a valid integer')
   } else if (type === 'array' && !Array.isArray(value)) {
-    throw new Error(`${value} must be a valid array`)
+    throw new TypeError('value must be a valid array')
   } else if (type == 'dictionary' && !isObject(value)) {
-    throw new Error(`${value} must be a valid dictionary`)
+    throw new TypeError('value must be a valid dictionary')
   } else if (type === 'url' && typeof value !== 'string') {
-    throw new Error(`${value} must be a valid url`)
+    throw new TypeError('value must be a valid url')
   }
 
-  return defaults.setUserDefault.call(this, type, key, value)
+  return defaults.setUserDefault.call(this, type, key, value, domain)
+}
+
+function isKeyManaged(key, domain) {
+  if (domain && typeof domain !== 'string') {
+    throw new TypeError('domain must be a valid string')
+  }
+
+  return defaults.isKeyManaged.call(this, key, domain)
+}
+
+function removeUserDefault(key, domain) {
+  if (domain && typeof domain !== 'string') {
+    throw new TypeError('domain must be a valid string')
+  }
+
+  return defaults.removeUserDefault.call(this, key, domain)
 }
 
 module.exports = {
-  getAllDefaults: defaults.getAllDefaults,
+  getAllDefaults,
   getUserDefault,
-  isKeyManaged: defaults.isKeyManaged,
+  isKeyManaged,
   setUserDefault,
-  removeUserDefault: defaults.removeUserDefault,
+  removeUserDefault
 }
