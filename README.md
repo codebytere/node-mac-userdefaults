@@ -101,3 +101,18 @@ const { removeUserDefault } = require('node-mac-userdefaults')
 
 removeUserDefault('ApplePressAndHoldEnabled')
 ```
+
+###  `defaults.isKeyManaged(key)`
+
+* `key` String - The `NSUserDefault` to check, e.g `AppleInterfaceStyle`.
+
+Returns a Boolean value indicating whether the specified key is managed by an administrator.
+
+Example:
+```js
+const { isKeyManaged } = require('node-mac-userdefaults')
+
+const managed = isKeyManaged('ApplePressAndHoldEnabled')
+
+console.log(managed) // false
+```

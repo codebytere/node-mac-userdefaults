@@ -53,6 +53,7 @@ function setUserDefault(type, key, value) {
 module.exports = {
   getAllDefaults: defaults.getAllDefaults,
   getUserDefault,
+  isKeyManaged: defaults.isKeyManaged,
   setUserDefault,
   removeUserDefault: defaults.removeUserDefault,
 }

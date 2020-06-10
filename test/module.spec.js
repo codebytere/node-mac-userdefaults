@@ -2,6 +2,7 @@ const { expect } = require('chai')
 const { 
   getAllDefaults,
   getUserDefault,
+  isKeyManaged,
   setUserDefault
 } = require('../index')
 
@@ -52,6 +53,13 @@ describe('node-mac-userdefaults', () => {
           setUserDefault(type, 'some-key', undefined)
         }).to.throw(`undefined must be a valid ${type}`)
       }
+    })
+  })
+
+  describe('isKeyManaged()', () => {
+    it('returns a boolean', () => {
+      const managed = isKeyManaged('AppleInterfaceStyle')
+      expect(managed).to.be.a('boolean')
     })
   })
 })

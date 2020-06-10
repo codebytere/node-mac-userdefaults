@@ -206,8 +206,22 @@ void RemoveUserDefault(const Napi::CallbackInfo &info) {
   [defaults removeObjectForKey:default_key];
 }
 
+// Returns whether or not an NSUserDefault is managed by an admin.
+Napi::Boolean IsKeyManaged(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+  const std::string key = info[0].As<Napi::String>().Utf8Value();
+
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  bool managed = [defaults objectIsForcedForKey:ToNSString(key)];
+
+  return Napi::Boolean::New(env, managed);
+}
+
 // Initializes all functions exposed to JS.
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
+  exports.Set(Napi::String::New(env, "isKeyManaged"),
+              Napi::Function::New(env, IsKeyManaged));
   exports.Set(Napi::String::New(env, "getAllDefaults"),
               Napi::Function::New(env, GetAllDefaults));
   exports.Set(Napi::String::New(env, "getUserDefault"),
