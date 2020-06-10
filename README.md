@@ -15,6 +15,46 @@ This native Node.js module provides an interface to the user’s defaults databa
 
 Returns `Record<string, any>` - An object containing all currently set defaults and their values for the current user.
 
+Example:
+```js
+const { getAllDefaults } = require('node-mac-userdefaults')
+
+const allDefaults = getAllDefaults()
+
+console.log(allDefaults)
+/*
+{
+  'com.apple.springing.enabled': 1,
+  'Brother MFC-J985DW': '1',
+  'com.apple.trackpad.enableSecondaryClick': 1,
+  'HP DeskJet 2600 series': '1',
+  'com.apple.trackpad.rotateGesture': 1,
+  NSNavPanelFileListModeForOpenMode2: 3,
+  Country: 'US',
+  'com.apple.preferences.timezone.selected_city': {
+    AppleMapID: '\x1Dq\x13\x13u\x1C\x19'
+  },
+  'Brother MFC-L9570CDW series': '1',
+  WebAutomaticSpellingCorrectionEnabled: 1,
+  'com.apple.trackpad.momentumScroll': 1,
+  AKLastIDMSEnvironment: 0,
+  'Hewlett Packard MFP M477fdn': '1',
+  NSAutomaticTextCompletionCollapsed: 0,
+  'com.apple.trackpad.fourFingerPinchSwipeGesture': 2,
+  AppleShowAllExtensions: 1,
+  'com.apple.trackpad.threeFingerTapGesture': 0,
+  NSQuitAlwaysKeepsWindows: 0,
+  'com.apple.trackpad.fourFingerVertSwipeGesture': 2,
+  NSLinguisticDataAssetsRequestTime: '2020-06-10 00:57:28 +0000',
+  NSAutomaticPeriodSubstitutionEnabled: 1,
+  'com.apple.springing.delay': 0,
+  'HP ENVY 5000 series': '1',
+  'com.apple.sound.beep.flash': 0,
+  AppleShowScrollBars: 'Automatic',
+  ...
+*/
+``` 
+
 ### `defaults.getUserDefault(type, key)`
 
 * `key` String - The `NSUserDefault` to fetch, e.g `AppleInterfaceStyle`.
