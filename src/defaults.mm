@@ -157,19 +157,23 @@ Napi::Value GetUserDefault(const Napi::CallbackInfo &info) {
   NSString *default_key = [NSString stringWithUTF8String:key.c_str()];
 
   if (type == "string") {
-    NSString *ret = [defaults stringForKey:default_key];
-    return Napi::String::New(env, std::string([ret UTF8String]));
+    NSString *s = [defaults stringForKey:default_key];
+    return Napi::String::New(env, s ? std::string([s UTF8String]) : "");
   } else if (type == "boolean") {
-    return Napi::Boolean::New(env, [defaults boolForKey:default_key]);
+    bool b = [defaults boolForKey:default_key];
+    return Napi::Boolean::New(env, b ? b : false);
   } else if (type == "float") {
-    return Napi::Number::New(env, [defaults floatForKey:default_key]);
+    float f = [defaults floatForKey:default_key];
+    return Napi::Number::New(env, f ? f : 0);
   } else if (type == "integer") {
-    return Napi::Number::New(env, [defaults integerForKey:default_key]);
+    int i = [defaults integerForKey:default_key];
+    return Napi::Number::New(env, i ? i : 0);
   } else if (type == "double") {
-    return Napi::Number::New(env, [defaults doubleForKey:default_key]);
+    double d = [defaults doubleForKey:default_key];
+    return Napi::Number::New(env, d ? d : 0);
   } else if (type == "url") {
-    NSString *url_string = [[defaults URLForKey:default_key] absoluteString];
-    return Napi::String::New(env, std::string([url_string UTF8String]));
+    NSString *u = [[defaults URLForKey:default_key] absoluteString];
+    return Napi::String::New(env, u ? std::string([u UTF8String]) : "");
   } else if (type == "array") {
     NSArray *array = [defaults arrayForKey:default_key];
     return NSArrayToNapiArray(env, array);

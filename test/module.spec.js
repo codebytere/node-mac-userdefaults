@@ -38,6 +38,19 @@ describe('node-mac-userdefaults', () => {
         getUserDefault('bad-type', 'hello-world')
       }).to.throw(`bad-type must be one of ${VALID_TYPES.join(', ')}`)
     })
+
+    it('returns values for unknown user defaults', () => {
+      const KEY = 'UserDefaultDoesNotExist';
+
+      expect(getUserDefault('boolean', KEY)).to.equal(false);
+      expect(getUserDefault('integer', KEY)).to.equal(0);
+      expect(getUserDefault('float', KEY)).to.equal(0);
+      expect(getUserDefault('double', KEY)).to.equal(0);
+      expect(getUserDefault('string', KEY)).to.equal('');
+      expect(getUserDefault('url', KEY)).to.equal('');
+      expect(getUserDefault('array', KEY)).to.deep.equal([]);
+      expect(getUserDefault('dictionary', KEY)).to.deep.equal({});
+    })
   })
 
   describe('setUserDefault()', () => {
