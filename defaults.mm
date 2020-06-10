@@ -7,15 +7,20 @@
 
 Napi::Array NSArrayToNapiArray(Napi::Env env, NSArray *array);
 Napi::Object NSDictionaryToNapiObject(Napi::Env env, NSDictionary *dict);
+NSArray *NapiArrayToNSArray(Napi::Array array);
+
+NSString *ToNSString(const std::string &str) {
+  return [NSString stringWithUTF8String:str.c_str()];
+}
 
 Napi::Array NSArrayToNapiArray(Napi::Env env, NSArray *array) {
   if (!array)
     return Napi::Array::New(env, 0);
 
-  int length = [array count];
+  size_t length = [array count];
   Napi::Array result = Napi::Array::New(env, length);
 
-  for (int idx = 0; idx < length; idx++) {
+  for (size_t idx = 0; idx < length; idx++) {
     id value = array[idx];
     if ([value isKindOfClass:[NSString class]]) {
       result[idx] = std::string([value UTF8String]);
@@ -42,6 +47,32 @@ Napi::Array NSArrayToNapiArray(Napi::Env env, NSArray *array) {
   return result;
 }
 
+NSArray *NapiArrayToNSArray(Napi::Array array) {
+  NSMutableArray *mutable_array =
+      [NSMutableArray arrayWithCapacity:array.Length()];
+
+  for (size_t idx = 0; idx < array.Length(); idx++) {
+    Napi::Value val = array[idx];
+    if (val.IsNumber()) {
+      NSNumber *wrappedInt = [NSNumber numberWithInt:val.ToNumber()];
+      [mutable_array addObject:wrappedInt];
+    } else if (val.IsBoolean()) {
+      NSNumber *wrappedBool = [NSNumber numberWithBool:val.ToBoolean()];
+      [mutable_array addObject:wrappedBool];
+    } else if (val.IsString()) {
+      const std::string str = (std::string)val.ToString();
+      [mutable_array addObject:ToNSString(str)];
+    } else if (val.IsArray()) {
+      Napi::Array sub_array = val.As<Napi::Array>();
+      [mutable_array addObject:NapiArrayToNSArray(sub_array)];
+    } else if (val.IsObject()) {
+      // TODO
+    }
+  }
+
+  return mutable_array;
+}
+
 Napi::Object NSDictionaryToNapiObject(Napi::Env env, NSDictionary *dict) {
   Napi::Object result = Napi::Object::New(env);
 
@@ -49,9 +80,10 @@ Napi::Object NSDictionaryToNapiObject(Napi::Env env, NSDictionary *dict) {
     return result;
 
   for (id key in dict) {
-    std::string str_key = [key isKindOfClass:[NSString class]]
-                              ? std::string([key UTF8String])
-                              : std::string([[key description] UTF8String]);
+    const std::string str_key =
+        [key isKindOfClass:[NSString class]]
+            ? std::string([key UTF8String])
+            : std::string([[key description] UTF8String]);
 
     id value = [dict objectForKey:key];
     if ([value isKindOfClass:[NSString class]]) {
@@ -91,8 +123,8 @@ Napi::Object GetAllDefaults(const Napi::CallbackInfo &info) {
 Napi::Value GetUserDefault(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
-  std::string key = info[0].As<Napi::String>().Utf8Value();
-  std::string type = info[1].As<Napi::String>().Utf8Value();
+  const std::string type = info[0].As<Napi::String>().Utf8Value();
+  const std::string key = info[1].As<Napi::String>().Utf8Value();
 
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
   NSString *default_key = [NSString stringWithUTF8String:key.c_str()];
@@ -112,12 +144,48 @@ Napi::Value GetUserDefault(const Napi::CallbackInfo &info) {
     NSString *url_string = [[defaults URLForKey:default_key] absoluteString];
     return Napi::String::New(env, std::string([url_string UTF8String]));
   } else if (type == "array") {
-    return NSArrayToNapiArray(env, [defaults arrayForKey:default_key]);
+    NSArray *array = [defaults arrayForKey:default_key];
+    return NSArrayToNapiArray(env, array);
   } else if (type == "dictionary") {
-    return NSDictionaryToNapiObject(env,
-                                    [defaults dictionaryForKey:default_key]);
+    NSDictionary *dict = [defaults dictionaryForKey:default_key];
+    return NSDictionaryToNapiObject(env, dict);
   } else {
     return env.Null();
+  }
+}
+
+void SetUserDefault(const Napi::CallbackInfo &info) {
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  const std::string type = info[0].As<Napi::String>().Utf8Value();
+  const std::string key = info[1].As<Napi::String>().Utf8Value();
+
+  NSString *default_key = ToNSString(key);
+
+  if (type == "string") {
+    const std::string value = (std::string)info[2].ToString();
+    [defaults setObject:ToNSString(value) forKey:default_key];
+  } else if (type == "boolean") {
+    bool value = info[2].ToBoolean();
+    [defaults setBool:value forKey:default_key];
+  } else if (type == "float") {
+    float value = info[2].ToNumber().FloatValue();
+    [defaults setFloat:value forKey:default_key];
+  } else if (type == "integer") {
+    int value = info[2].ToNumber().Int32Value();
+    [defaults setInteger:value forKey:default_key];
+  } else if (type == "double") {
+    double value = info[2].ToNumber().DoubleValue();
+    [defaults setDouble:value forKey:default_key];
+  } else if (type == "url") {
+    std::string url_string = (std::string)info[2].ToString();
+    NSURL *url = [NSURL URLWithString:ToNSString(url_string)];
+    [defaults setURL:url forKey:default_key];
+  } else if (type == "array") {
+    Napi::Array array = info[2].As<Napi::Array>();
+    [defaults setObject:NapiArrayToNSArray(array) forKey:default_key];
+  } else if (type == "dictionary") {
+    // (NSDictionary* dict = DictionaryValueToNSDictionary(value)) {
+    // [defaults setObject:dict forKey:default_key];
   }
 }
 
@@ -127,6 +195,8 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
               Napi::Function::New(env, GetAllDefaults));
   exports.Set(Napi::String::New(env, "getUserDefault"),
               Napi::Function::New(env, GetUserDefault));
+  exports.Set(Napi::String::New(env, "setUserDefault"),
+              Napi::Function::New(env, SetUserDefault));
 
   return exports;
 }

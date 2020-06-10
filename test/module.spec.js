@@ -1,17 +1,19 @@
 const { expect } = require('chai')
 const { 
   getAllDefaults,
-  getUserDefault
+  getUserDefault,
+  setUserDefault
 } = require('../index')
 
-const VALID_TYPES =  [
+const VALID_TYPES = [
   'string',
   'float',
+  'integer',
+  'double',
   'boolean',
   'array',
   'url',
-  'object',
-  'double'
+  'dictionary',
 ]
 
 describe('node-mac-userdefaults', () => {
@@ -24,10 +26,32 @@ describe('node-mac-userdefaults', () => {
   })
 
   describe('getUserDefault()', () => {
+    it('should throw on extra arguments', () => {
+      expect(() => {
+        getUserDefault('bad-type', 'hello-world', 'blah')
+      }).to.throw('Arguments must be (type, key)')
+    })
+
     it('should throw on invalid types', () => {
       expect(() => {
-        getUserDefault('hello-world', 'bad-type')
-      }).to.throw(`bad-type must be one of ${VALID_TYPES.join(' ,')}`)
+        getUserDefault('bad-type', 'hello-world')
+      }).to.throw(`bad-type must be one of ${VALID_TYPES.join(', ')}`)
+    })
+  })
+
+  describe('setUserDefault()', () => {
+    it('should throw on invalid types', () => {
+      expect(() => {
+        setUserDefault('bad-type', 'hello', 'world')
+      }).to.throw(`bad-type must be one of ${VALID_TYPES.join(', ')}`)
+    })
+
+    it('should throw on mismatched values for types', () => {
+      for (const type of VALID_TYPES) {
+        expect(() => {
+          setUserDefault(type, 'some-key', undefined)
+        }).to.throw(`undefined must be a valid ${type}`)
+      }
     })
   })
 })
