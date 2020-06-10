@@ -159,7 +159,7 @@ Note: Passing `NSGlobalDomain` is unsupported.
 
 ### What are domains?
 
-The `NSUserDefaults` database consists of a hierarchy or domains. Whenever you read the value for a give key, `NSUserDefaults` traverses this hierarchy from top to bottom and returns the first value it finds. They can be either persistent (stored on disk) or volatile (only valid for the lifetime of the `NSUserDefaults` instance).
+The `NSUserDefaults` database consists of a hierarchy of domains. Whenever you read the value for a given key, `NSUserDefaults` traverses this hierarchy from top to bottom and returns the first value it finds. These domains can be either persistent (stored on disk) or volatile (only valid for the lifetime of the `NSUserDefaults` instance).
 
 | Domain Name | Description  | State |
 |---|---|---|
