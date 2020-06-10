@@ -54,4 +54,5 @@ module.exports = {
   getAllDefaults: defaults.getAllDefaults,
   getUserDefault,
   setUserDefault,
+  removeUserDefault: defaults.removeUserDefault,
 }

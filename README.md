@@ -17,7 +17,7 @@ Returns `Record<string, any>` - An object containing all currently set defaults 
 
 ### `defaults.getUserDefault(type, key)`
 
-* `key` String - The NSUserDefault key to fetch, e.g `AppleInterfaceStyle`.
+* `key` String - The `NSUserDefault` to fetch, e.g `AppleInterfaceStyle`.
 * `type` String - Can be one of `string`, `boolean`, `integer`, `float`, `double`,
   `url`, `array` or `dictionary`.
 
@@ -35,14 +35,29 @@ console.log(interfaceStyle) // 'Dark'
 ### `defaults.setUserDefault(type, key, value)`
 
 * `type` String - Can be `string`, `boolean`, `integer`, `float`, `double`, `url`, `array` or `dictionary`.
-* `key` String - The NSUserDefault key to update, e.g `AppleInterfaceStyle`.
+* `key` String - The `NSUserDefault` to update, e.g `AppleInterfaceStyle`.
 * `value` any - The new value to set for `key`; must match type of `type`.
 
-Set the value of `key` in `NSUserDefaults`.
+Sets the value of `key` in `NSUserDefaults`.
 
 Example:
 ```js
 const { setUserDefault } = require('node-mac-userdefaults')
 
 setUserDefault('boolean', 'ApplePressAndHoldEnabled', true)
-``` 
+```
+
+### `defaults.removeUserDefault(key)`
+
+* `key` String - The `NSUserDefault` to remove, e.g `AppleInterfaceStyle`.
+
+Removes the `key` in `NSUserDefaults`.
+
+This can be used to restore the default or global value of a `key` previously set with `setUserDefault`.
+
+Example:
+```js
+const { removeUserDefault } = require('node-mac-userdefaults')
+
+removeUserDefault('ApplePressAndHoldEnabled')
+```

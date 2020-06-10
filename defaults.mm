@@ -9,10 +9,12 @@ Napi::Array NSArrayToNapiArray(Napi::Env env, NSArray *array);
 Napi::Object NSDictionaryToNapiObject(Napi::Env env, NSDictionary *dict);
 NSArray *NapiArrayToNSArray(Napi::Array array);
 
+// Converts a std::string to an NSString.
 NSString *ToNSString(const std::string &str) {
   return [NSString stringWithUTF8String:str.c_str()];
 }
 
+// Converts a NSArray to a Napi::Array. 
 Napi::Array NSArrayToNapiArray(Napi::Env env, NSArray *array) {
   if (!array)
     return Napi::Array::New(env, 0);
@@ -47,6 +49,7 @@ Napi::Array NSArrayToNapiArray(Napi::Env env, NSArray *array) {
   return result;
 }
 
+// Converts a Napi::Array to a NSArray. 
 NSArray *NapiArrayToNSArray(Napi::Array array) {
   NSMutableArray *mutable_array =
       [NSMutableArray arrayWithCapacity:array.Length()];
@@ -73,6 +76,7 @@ NSArray *NapiArrayToNSArray(Napi::Array array) {
   return mutable_array;
 }
 
+// Converts an NSDictionary to a Napi::Object.
 Napi::Object NSDictionaryToNapiObject(Napi::Env env, NSDictionary *dict) {
   Napi::Object result = Napi::Object::New(env);
 
@@ -112,6 +116,7 @@ Napi::Object NSDictionaryToNapiObject(Napi::Env env, NSDictionary *dict) {
 
 /* EXPORTED FUNCTIONS */
 
+// Returns all NSUserDefaults for the current user.
 Napi::Object GetAllDefaults(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
@@ -120,6 +125,7 @@ Napi::Object GetAllDefaults(const Napi::CallbackInfo &info) {
   return NSDictionaryToNapiObject(env, all_defaults);
 }
 
+// Returns the value of 'key' in NSUserDefaults for a specified type.
 Napi::Value GetUserDefault(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
@@ -154,6 +160,7 @@ Napi::Value GetUserDefault(const Napi::CallbackInfo &info) {
   }
 }
 
+// Sets the value of the NSUserDefault for 'key' in NSUserDefaults.
 void SetUserDefault(const Napi::CallbackInfo &info) {
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
   const std::string type = info[0].As<Napi::String>().Utf8Value();
@@ -189,6 +196,16 @@ void SetUserDefault(const Napi::CallbackInfo &info) {
   }
 }
 
+// Removes the default for 'key' in NSUserDefaults.
+void RemoveUserDefault(const Napi::CallbackInfo &info) {
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+  const std::string key = info[1].As<Napi::String>().Utf8Value();
+  NSString *default_key = ToNSString(key);
+
+  [defaults removeObjectForKey:default_key];
+}
+
 // Initializes all functions exposed to JS.
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "getAllDefaults"),
@@ -197,6 +214,8 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
               Napi::Function::New(env, GetUserDefault));
   exports.Set(Napi::String::New(env, "setUserDefault"),
               Napi::Function::New(env, SetUserDefault));
+  exports.Set(Napi::String::New(env, "removeUserDefault"),
+              Napi::Function::New(env, RemoveUserDefault));
 
   return exports;
 }
