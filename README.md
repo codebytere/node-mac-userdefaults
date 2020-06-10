@@ -122,3 +122,21 @@ const managed = isKeyManaged('ApplePressAndHoldEnabled')
 
 console.log(managed) // false
 ```
+
+## FAQ
+
+### What are domains?
+
+The `NSUserDefaults` database consists of a hierarchy or domains. Whenever you read the value for a give key, `NSUserDefaults` traverses this hierarchy from top to bottom and returns the first value it finds. They can be either persistent (stored on disk) or volatile (only valid for the lifetime of the `NSUserDefaults` instance).
+
+| Domain Name | Description  | State |
+|---|---|---|
+| `NSArgumentDomain` | This is the highest priority domain - it can be used to temporarily override any preference | volatile |
+| `Application` | This domain is where your app’s settings are stored when you invoke `setUserDefault` methods without specifying a domain | persistent |
+| `NSGlobalDomain` | This domain is where system-wide settings are stored | persistent |
+| `Languages` | This domain contains regional preferences such as month names or date formats for each locale | volatile |
+| `NSRegistrationDomain` | This domain serves as a fallback for any value that is not found in the Application domain  | volatile |
+
+You can also specify custom domains to store a set of preferences.
+
+See [this resource](https://oleb.net/blog/2014/02/nsuserdefaults-handling-default-values/) for more information.
