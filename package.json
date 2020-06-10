@@ -9,7 +9,7 @@
     "lint": "prettier --check index.js",
     "format": "npm run format:js && npm run format:cpp",
     "format:js": "prettier --write index.js",
-    "format:cpp": "find src/ -iname *.h -o -iname *.cc -iname *.mm | xargs clang-format -i",
+    "format:cpp": "find src -name '*.mm' -o -name '*.h' -o -name '*.cc'| xargs clang-format -i",
     "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "repository": {
