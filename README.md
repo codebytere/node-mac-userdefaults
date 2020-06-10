@@ -1,5 +1,5 @@
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
- [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![Lint Status](https://github.com/codebytere/node-mac-userdefaults/workflows/Lint/badge.svg)](https://github.com/codebytere/node-mac-userdefaults/actions)
+ [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![Lint Status](https://github.com/codebytere/node-mac-userdefaults/workflows/Lint/badge.svg)](https://github.com/codebytere/node-mac-userdefaults/actions) [![Test Status](https://github.com/codebytere/node-mac-userdefaults/workflows/Test/badge.svg)](https://github.com/codebytere/node-mac-userdefaults/actions)
 
 # node-mac-userdefaults
 
@@ -17,7 +17,7 @@ Returns `Record<string, any>` - An object containing all currently set defaults 
 
 ### `defaults.getUserDefault(type, key)`
 
-* `key` String
+* `key` String - The NSUserDefault key to fetch, e.g `AppleInterfaceStyle`.
 * `type` String - Can be one of `string`, `boolean`, `integer`, `float`, `double`,
   `url`, `array` or `dictionary`.
 
@@ -35,8 +35,8 @@ console.log(interfaceStyle) // 'Dark'
 ### `defaults.setUserDefault(type, key, value)`
 
 * `type` String - Can be `string`, `boolean`, `integer`, `float`, `double`, `url`, `array` or `dictionary`.
-* `key` String
-* `value` String
+* `key` String - The NSUserDefault key to update, e.g `AppleInterfaceStyle`.
+* `value` any - The new value to set for `key`; must match type of `type`.
 
 Set the value of `key` in `NSUserDefaults`.
 
