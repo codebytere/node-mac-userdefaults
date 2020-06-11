@@ -127,11 +127,27 @@ describe('node-mac-userdefaults', () => {
       expect(arrayDefault).to.deep.equal(array)
     })
 
-    it('should be able to set a user default to an object', () => {
+    it('should be able to set a user default to a simple object', () => {
       setUserDefault('dictionary', 'DictTest', { hello: 'world' })
 
       const dictDefault = getUserDefault('dictionary', 'DictTest')
       expect(dictDefault).to.deep.equal({ hello: 'world' })
+    })
+
+    it('should be able to set a user default to a complex object', () => {
+      const complexObject = {
+        hello: 'world',
+        test: [1, 2],
+        answerToLife: 42,
+        nested: {
+          goodnight: 'moon'
+        }
+      }
+
+      setUserDefault('dictionary', 'ComplexDictTest', complexObject)
+
+      const dictDefault = getUserDefault('dictionary', 'ComplexDictTest')
+      expect(dictDefault).to.deep.equal(complexObject)
     })
   })
 
