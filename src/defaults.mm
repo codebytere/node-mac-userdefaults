@@ -305,9 +305,9 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "removeUserDefault"),
               Napi::Function::New(env, RemoveUserDefault));
   exports.Set(Napi::String::New(env, "addDomain"),
-            Napi::Function::New(env, AddDomain));
+              Napi::Function::New(env, AddDomain));
   exports.Set(Napi::String::New(env, "removeDomain"),
-            Napi::Function::New(env, RemoveDomain));
+              Napi::Function::New(env, RemoveDomain));
 
   return exports;
 }
